@@ -33,6 +33,7 @@ export async function fetchPublic<T>(
       ...init,
       headers: {
         "Content-Type": "application/json",
+        Accept: "application/json",
         ...(init.headers ?? {}),
       },
       next: { revalidate: 60, ...(init.next ?? {}) },
