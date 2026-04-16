@@ -187,6 +187,7 @@ export default function SignupPage() {
               id="name"
               type="text"
               autoComplete="name"
+              aria-required="true"
               aria-invalid={Boolean(errors.name) || undefined}
               aria-describedby={errors.name ? "name-error" : undefined}
               className={cn(
@@ -215,6 +216,7 @@ export default function SignupPage() {
               id="email"
               type="email"
               autoComplete="email"
+              aria-required="true"
               aria-invalid={Boolean(errors.email) || undefined}
               aria-describedby={errors.email ? "email-error" : undefined}
               className={cn(
@@ -243,6 +245,7 @@ export default function SignupPage() {
               id="password"
               type="password"
               autoComplete="new-password"
+              aria-required="true"
               aria-invalid={Boolean(errors.password) || undefined}
               aria-describedby={errors.password ? "password-error" : undefined}
               className={cn(

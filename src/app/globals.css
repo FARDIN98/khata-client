@@ -80,13 +80,13 @@
   /* Shadow */
   --shadow-khata-card: 0 1px 2px rgba(20, 15, 10, 0.04), 0 4px 12px rgba(20, 15, 10, 0.06);
 
-  /* Keyframes */
+  /* Animation utility — keyframes defined outside @theme (Tailwind v4 drops nested @keyframes). */
   --animate-khata-shimmer: khata-shimmer 1.6s ease-in-out infinite;
+}
 
-  @keyframes khata-shimmer {
-    0% { background-position: -200% 0; }
-    100% { background-position: 200% 0; }
-  }
+@keyframes khata-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
 }
 
 body {

@@ -165,6 +165,7 @@ export default function LoginPage() {
               id="email"
               type="email"
               autoComplete="email"
+              aria-required="true"
               aria-invalid={Boolean(errors.email) || undefined}
               aria-describedby={errors.email ? "email-error" : undefined}
               className={cn(
@@ -193,6 +194,7 @@ export default function LoginPage() {
               id="password"
               type="password"
               autoComplete="current-password"
+              aria-required="true"
               aria-invalid={Boolean(errors.password) || undefined}
               aria-describedby={errors.password ? "password-error" : undefined}
               className={cn(
