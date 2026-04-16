@@ -47,7 +47,7 @@ They click "Try as Demo Customer" → they're auto-logged-in, toast confirms, th
    - `GET /dokan-events?upcoming=true` — for upcoming events slider
    - `GET /dokan-events?upcoming=true&featured=true` — for hero featured event
 
-   > **Note on param names:** `upcoming=true` and `featured=true` are the intended filters. Before writing the fetcher, I'll verify the exact query param names in `khata-server/src/dokan-events/dokan-events.controller.ts` — if the controller uses different names (e.g. `isUpcoming`, `isFeatured`), adjust the fetch URLs accordingly. The public-api contract for Home depends on these three endpoints being reachable without auth.
+   > **Verified 2026-04-16:** `upcoming=true` and `featured=true` are the correct param names per `khata-server/src/modules/dokan-events/dokan-events.controller.ts` lines 89-90 (both use `ParseBoolPipe`). `@Get()` list endpoint on `dokans` and `dokan-events` controllers have no `@UseGuards(JwtAuthGuard)` — both are public and work without tokens.
 4. **New fetcher: `src/lib/public-api.ts`.** Plain `fetch()`-based helper, not the existing `src/lib/api.ts` (which is client-only and reads localStorage). Signature:
    ```ts
    export async function fetchPublic<T>(
@@ -75,9 +75,12 @@ They click "Try as Demo Customer" → they're auto-logged-in, toast confirms, th
 8. **Component-per-file layout.** Each of the 10 sections gets its own file under `src/components/home/*.tsx`. Matches existing `src/components/ui/*` convention. Keeps review diffs small.
 9. **Demo button behavior.** `useAuth().login()` → stay on `/` → show toast "Signed in as <role>@khata.com". Does **not** redirect to any dashboard (those 404 today).
 10. **Nav strip is inline + minimal.** Just Khata wordmark (left) + "Sign in" / "Sign up" links (right). No auth-awareness. Full app-shell nav ships with dashboards.
-11. **Testimonial is hardcoded English.** One quote attributed to Maya (seeded shopkeeper). Copy: "VIP customers come back more often — now I know who they are." — Maya, Aisha's Boutique. (Note: seed calls the shop "Aisha's Boutique" not "Maya's Boutique"; using the seeded name.)
+11. **Testimonial is hardcoded English.** One quote attributed to Maya (seeded shopkeeper). Copy: "VIP customers come back more often — now I know who they are." — Maya, Maya's Boutique.
 12. **Footer GitHub link = `https://github.com/FARDIN98/khata-client`.**
 13. **Hero proposition copy:** "Your shop's ledger. Your tier. Your events." (English-only per copy override line 500-508. The original "Your shop's খাতা…" in master doc §Hero is overridden by the copy-direction rule.)
+14. **Seed rename prerequisite.** `khata-server/src/seed.ts` currently uses `'Aisha Rahman'` + `'Aisha's Boutique'`. Design doc canonically uses "Maya" throughout. Rename seed (Aisha → Maya) is **Step 0 of the implementation plan** — separate backend commit before any frontend work. This keeps the Home page's testimonial, demo button tooltip, and any future pages' narrative aligned with the design doc without drift.
+15. **HowItWorks is typography-only.** No custom SVG illustrations. Each vignette gets a distinct typographic treatment (different accent color, different text weight, varied layout shape) to satisfy the anti-slop "varied illustration" rule without requiring generated assets. Ships tonight without asset-generation risk.
+16. **Seed coverage ships as-is (2 shops).** 4 of 6 category tiles will show "0 shops yet" count. Honest early-stage state. Copy on empty tiles stays neutral: "0 shops yet" (no "coming soon" filler).
 
 ---
 
@@ -239,11 +242,12 @@ type DesignCategory =
 
 **Input:** none (static).
 **Layout:** 3 vignettes, vertically stacked on mobile, 3-col grid on desktop. **Each vignette has a different visual treatment** — not 3 identical icon-in-circle cards (that's the banned AI slop pattern).
+**Approach (locked per decision 15): typography-only, NO custom SVG assets.** Each vignette has a different typographic treatment so they read as varied moments, not three symmetric cards.
 **Vignettes:**
-  1. "Follow a shop" — small accent illustration (abstract shop-front line-art), 60-word blurb.
-  2. "Spend or attend" — different illustration style (e.g. hand-drawn receipt ticks), 60-word blurb.
-  3. "Unlock tier-gated events" — different visual (abstract tier-bar motif), 60-word blurb.
-**Assets:** 3 SVGs in `public/illustrations/howitworks/*.svg`. If generating these is too expensive for the implementation phase, fall back to typography-only vignettes with varied accent colors per vignette — **still NOT 3 symmetric cards**.
+  1. **"Follow a shop"** — huge Fraunces numeral "01" as a visual anchor, left-aligned. Title + 60-word blurb. Accent color: terra cotta.
+  2. **"Spend or attend"** — vignette 2 drops the numeral and uses a wide horizontal rule above the title (the tier-bar motif pre-echoed). Title + 60-word blurb. Accent color: teal.
+  3. **"Unlock tier-gated events"** — vignette 3 uses a small vertical stack of 3 short bars on the left (tier shapes: NEW/REGULAR/VIP) rendered in pure CSS (no SVG). Title + 60-word blurb. Accent color: saffron.
+**No assets required.** Every visual element above is HTML + Tailwind utility classes. Zero generation risk.
 
 ### 7. `HomeLoyaltyTiers` (server component)
 
@@ -271,7 +275,7 @@ type DesignCategory =
 **Input:** none (hardcoded).
 **Layout:** centered block (the only centered section on the page — acceptable for single quote per design rules), max-w-2xl mx-auto.
 **Quote:** "VIP customers come back more often — now I know who they are."
-**Attribution:** "Maya, Aisha's Boutique" (note: seeded shop owner is actually Aisha Rahman; "Maya" is the persona name used throughout the design doc. Using "Maya" to match doc; if Hasan wants real seed name, one-line swap).
+**Attribution:** "Maya, Maya's Boutique" (seed rename from Aisha → Maya is Step 0 of the implementation plan — see decision 14).
 **Visual:** large serif opening quote mark, Fraunces 400.
 **NO photo of smiling person.**
 
@@ -282,13 +286,13 @@ type DesignCategory =
 **Buttons (3):** arranged in a row on desktop, stacked on mobile.
   - "Demo Customer" → `login('demo@khata.com', 'demo1234')`
   - "Demo Shopkeeper" → `login('shop-one@khata.bd', 'dokan123')`
-  - "Demo Admin" → `login('admin@khata.bd', '<admin-password-from-seed>')`
+  - "Demo Admin" → `login('admin@khata.com', 'admin1234')`
 **On click:**
   1. Call `useAuth().login(email, password)`
   2. On success: toast "Signed in as <role>" + stay on `/`
   3. On failure: toast error + stay on `/`
 **Do NOT redirect** to any dashboard route (they 404 today).
-**Admin password note:** need to verify from seed — if seed uses a specific admin password, hardcode here; if admin password varies, fall back to showing only the two demo buttons that are known to work.
+**Verified 2026-04-16:** all three credential pairs match `khata-server/src/seed.ts` (admin: line 68-69; demo customer: line 134; dokandar: line 106 + `dokan123` password line 84).
 
 ### 11. `HomeFooter` (server component)
 
@@ -367,4 +371,4 @@ type DesignCategory =
 
 ## Next step
 
-After approval, invoke `superpowers:writing-plans` to turn this spec into a numbered implementation plan (file creation order, dependencies, commit boundaries).
+After approval, invoke `superpowers:writing-plans` to turn this spec into a numbered implementation plan. The plan's Step 0 will be the seed rename (Aisha → Maya) in `khata-server`, after which the khata-client Home page work proceeds in dependency order: `public-api.ts` + `category-map.ts` → individual component files → `page.tsx` replacement → verification.
