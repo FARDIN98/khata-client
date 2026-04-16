@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Hind_Siliguri, Fraunces } from "next/font/google";
+import { Providers } from "@/components/Providers";
 import "./globals.css";
 
 const hindSiliguri = Hind_Siliguri({
@@ -32,7 +33,7 @@ export default function RootLayout({
       className={`${hindSiliguri.variable} ${fraunces.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-khata-bg text-khata-text font-sans">
-        {children}
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
