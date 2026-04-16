@@ -30,7 +30,7 @@
 ### khata-client (14 files created, 1 modified)
 | Path | Responsibility | Action |
 |---|---|---|
-| `.env.local` | Dev-only env: `NEXT_PUBLIC_API_URL=http://localhost:3003` | Create (gitignored) |
+| `.env.local` | Dev-only env: `NEXT_PUBLIC_API_URL=http://localhost:3003/api` (backend has `app.setGlobalPrefix('api')`) | Create (gitignored) |
 | `src/lib/public-api.ts` | Server-safe `fetchPublic<T>()` — plain fetch, returns `T \| null`, never throws | Create |
 | `src/lib/category-map.ts` | Seed→design category lookup + `DesignCategory` type + `DESIGN_CATEGORIES` ordered list | Create |
 | `src/components/home/HomeNav.tsx` | Minimal inline nav: wordmark + Sign in/Sign up links | Create |
@@ -101,19 +101,19 @@ git commit -m "chore(seed): rename shop owner Aisha → Maya to match design doc
 
 - [ ] **Step 1: Check if backend is running on 3003**
 
-Run: `curl -s -o /dev/null -w "%{http_code}\n" http://localhost:3003/dokans`
+Run: `curl -s -o /dev/null -w "%{http_code}\n" http://localhost:3003/api/dokans`
 
-Expected: `200`. If `connection refused`, start backend in another terminal: `cd /Users/fardin/Documents/Projects/B6A6/khata-server && npm run start:dev`. Wait ~5 seconds, retry.
+Expected: `200`. Note the `/api/` prefix — `khata-server/src/main.ts:41` has `app.setGlobalPrefix('api', ...)`, so every endpoint is served under `/api`. If `connection refused`, start backend in another terminal: `cd /Users/fardin/Documents/Projects/B6A6/khata-server && npm run start:dev`. Wait ~5 seconds, retry.
 
 - [ ] **Step 2: Create .env.local**
 
 Write `/Users/fardin/Documents/Projects/B6A6/khata-client/.env.local`:
 
 ```
-NEXT_PUBLIC_API_URL=http://localhost:3003
+NEXT_PUBLIC_API_URL=http://localhost:3003/api
 ```
 
-Single line, no trailing newline matters, no quotes.
+The `/api` prefix is baked into `NEXT_PUBLIC_API_URL` so every `fetchPublic("/dokans")` call resolves to `http://localhost:3003/api/dokans`. Matches existing `src/lib/api.ts` convention (`api.get("/auth/me")` → `/api/auth/me`). Single line, no quotes.
 
 - [ ] **Step 3: Verify .env.local is gitignored**
 
