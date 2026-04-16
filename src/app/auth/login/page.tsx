@@ -39,14 +39,14 @@ const DEMO_ACCOUNTS: DemoAccount[] = [
   },
   {
     label: "Login as Customer",
-    email: "grahok-one@khata.bd",
-    password: "grahok123",
+    email: "demo@khata.com",
+    password: "demo1234",
     role: "GRAHOK",
   },
   {
     label: "Login as Admin",
-    email: "admin@khata.bd",
-    password: "admin123",
+    email: "admin@khata.com",
+    password: "admin1234",
     role: "SUPER_ADMIN",
   },
 ];
