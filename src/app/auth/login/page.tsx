@@ -33,20 +33,20 @@ interface DemoAccount {
 const DEMO_ACCOUNTS: DemoAccount[] = [
   {
     label: "Login as Shopkeeper",
-    email: "maya@khata.demo",
-    password: "KhataDemo!2026",
+    email: "shop-one@khata.bd",
+    password: "dokan123",
     role: "DOKANDAR",
   },
   {
     label: "Login as Customer",
-    email: "salma@khata.demo",
-    password: "KhataDemo!2026",
+    email: "grahok-one@khata.bd",
+    password: "grahok123",
     role: "GRAHOK",
   },
   {
     label: "Login as Admin",
-    email: "admin@khata.demo",
-    password: "KhataDemo!2026",
+    email: "admin@khata.bd",
+    password: "admin123",
     role: "SUPER_ADMIN",
   },
 ];
